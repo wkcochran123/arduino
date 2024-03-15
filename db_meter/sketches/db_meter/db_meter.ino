@@ -1,6 +1,6 @@
 const int soundSensorPin = A0; // Analog pin connected to the Big Sound Sensor Module
 const int buttonOn = 50;
-const int NUM_LEDS = 10;
+const int NUM_LEDS = 11;
 const int LED_START = 2;
 const int SAMPLES = 50;
 const int PEAK_TIME = 2;
@@ -27,11 +27,13 @@ int get_max (int val) {
   if (cur_max < val) {
     last_second_mark = current_second;
     cur_max = val;
+    Serial.println(val);
   }
   return cur_max;
 }
 
 int fire_pins (int val) {
+  Serial.println(val);
   for (int i = LED_START; i <= LED_START+NUM_LEDS; i++) {
     int led = LOW;
     if (i<=val) led = HIGH;
@@ -44,7 +46,6 @@ int fire_pins (int val) {
       debounce = false;
     }
     if (i == get_max(val) && toggle) led = HIGH;
-    Serial.println(digitalRead(50));
     digitalWrite(i, led);
   }
 }
@@ -67,6 +68,7 @@ void loop() {
     vals[x] = analogRead(soundSensorPin);
   }
 
+
   float avg = 0.0;
   int max = 0;
   int min = 1000;
@@ -76,11 +78,11 @@ void loop() {
     if (vals[x] < min) min = vals[x];
     if (vals[x] > max) max = vals[x];
   }
-  avg /= 300;
+  avg /= SAMPLES;
 
   
 // Serial.println(max);
   // Adjust the threshold value according to your environment
-  fire_pins(compute_pin(656,670,max));
+  fire_pins(compute_pin(260,265,max));
   delay(30);
 }
