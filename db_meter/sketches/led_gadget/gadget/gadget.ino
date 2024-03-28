@@ -1,4 +1,4 @@
-const int soundSensorPin = A0; // Analog pin connected to the Big Sound Sensor Module
+const int soundSensorPin = A1; // Analog pin connected to the Big Sound Sensor Module
 const int buttonOn = 2;
 const int NUM_LEDS = 11;
 const int LED_START = 3;
@@ -20,6 +20,13 @@ bool debounce = false;
 long time_start;
 long last_guess = -9;
 
+int begin_time() {
+  time_start = millis();
+}
+
+bool done_yet() {
+  return millis() - time_start > 30000;
+}
 
 int get_max (int val) {
   long current_second = millis()/1000;
@@ -54,11 +61,8 @@ int fire_pins (int val) {
 }
 
 void setup() {
-//  pinMode(soundSensorPin, INPUT); // Set the Sound Sensor pin as INPUT
-//  pinMode(buttonOn, INPUT_PULLUP);
   pinMode(soundSensorPin, INPUT); // Set the Sound Sensor pin as INPUT
   pinMode(buttonOn, INPUT);
-  digitalWrite(buttonOn, HIGH);
   for (int i = 2; i < 2+NUM_LEDS; i++) {
     pinMode(i,OUTPUT);
     digitalWrite(i,HIGH);
@@ -66,6 +70,8 @@ void setup() {
   Serial.begin(9600); // Initialize serial communication for debugging (optional)
   Serial.println("Starting");
 }
+
+int maxmax = 0;
 
 void loop() {
   int vals[SAMPLES];
@@ -85,10 +91,13 @@ void loop() {
     if (vals[x] > max) max = vals[x];
   }
   avg /= SAMPLES;
+  maxmax = max > maxmax?max:maxmax;
 
   Serial.println(max);
+  Serial.println(maxmax);
+  Serial.println(compute_pin(210,220,max));
 // Serial.println(max);
   // Adjust the threshold value according to your environment
   fire_pins(compute_pin(260,265,max));
-  delay(300);
+  delay(30);
 }
