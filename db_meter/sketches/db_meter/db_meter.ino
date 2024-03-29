@@ -1,16 +1,17 @@
-const int soundSensorPin = A0; // Analog pin connected to the Big Sound Sensor Module
-const int buttonOn = 2;
+const int soundSensorPin = A4; // Analog pin connected to the Big Sound Sensor Module
+const int buttonOn = 13;
 const int NUM_LEDS = 11;
-const int LED_START = 3;
-const int SAMPLES = 50;
+const int LED_START = 2;
+const int SAMPLES = 100;
 const int PEAK_TIME = 2;
 
+// Interpolate to NUM_LEDS + 1 buckets.  The first bucket is always guaranteed to be on,
+// Also, looks like linear response may not be ideal...
 int compute_pin (int min, int max, float val) {
-  float scale = (val - (float)min)/((float)(max-min));
-  if (scale >= 1.0) scale=.9999;
-  if (scale < 0) scale = 0;
-
-  return LED_START + scale*(max-min);
+  float bucket_width = (max - min)/(NUM_LEDS+1);  // The width for each led.  The lowest led is always on, so we get one more than we have pins.
+  float shifted_val = val - (float)min;
+  float bucket_number = shifted_val/bucket_width;  // The lowest bucket is always on..
+  return (int) bucket_number;
 }
 
 long cur_max = LED_START;
@@ -58,15 +59,15 @@ void setup() {
 //  pinMode(buttonOn, INPUT_PULLUP);
   pinMode(soundSensorPin, INPUT); // Set the Sound Sensor pin as INPUT
   pinMode(buttonOn, INPUT);
-  digitalWrite(buttonOn, HIGH);
   for (int i = 2; i < 2+NUM_LEDS; i++) {
     pinMode(i,OUTPUT);
-    digitalWrite(i,HIGH);
   }
   Serial.begin(9600); // Initialize serial communication for debugging (optional)
   Serial.println("Starting");
+  delay(2000);
 }
 
+int maxmax = 0;
 void loop() {
   int vals[SAMPLES];
 
@@ -86,9 +87,18 @@ void loop() {
   }
   avg /= SAMPLES;
 
-  Serial.println(max);
+  if (maxmax > 1000) {
+    delay(2000);
+    return;
+  }
+  
+  Serial.print(max);
+  Serial.print(" ");
+  Serial.println(compute_pin(800,850,max));
+  maxmax = maxmax > max? maxmax:max;
+  Serial.println(maxmax);
 // Serial.println(max);
   // Adjust the threshold value according to your environment
-  fire_pins(compute_pin(260,265,max));
-  delay(300);
+  // fire_pins(compute_pin(633,670,max));
+  delay(30);
 }
