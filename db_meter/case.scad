@@ -13,9 +13,9 @@ battery_long_post_inside = 91; // 91.62
 
 battery_post_height = 6.3;
 
-db_width = 82;
+db_width = 84;
 db_depth = 28;
-db_height = 76.5;
+db_height = 80;
 
 db_short_post_outside = 49; // 48.3
 db_short_post_inside = 43; // 43.75
@@ -23,7 +23,7 @@ db_short_post_inside = 43; // 43.75
 db_long_post_outside = 68; // 68.0
 db_long_post_inside = 63; // 63.7
 
-mic_diameter = 9.57;
+mic_diameter = 9.57/2;
 db_post_height = 8.4;
 wall_width = 2;
 inner_buffer = 15;
@@ -46,12 +46,12 @@ leds = 12;
 
 module led_hole(x=0,y=0,z=0) {
     translate([x,y,z]) {
-        cube([1.6,3,3.5]);
+        cube([3.2,3,3.5]);
     }
 }
 
 module led_holes() {
-    for(i = [0:.5:12]) {
+    for(i = [0:1:12]) {
         led_hole(i*5,0,0);
     }
 }
@@ -60,8 +60,8 @@ module led_post() {
     rotate([90,0,0])
     translate([3,3,-db_post_height/2])
     difference() {
-        cylinder(db_post_height,3,3,center=true);
-        cylinder(db_post_height+5,2,2,center=true);
+        cylinder(db_post_height,1.5,1.5,center=true);
+        cylinder(db_post_height+5,1,1,center=true);
     }
 }
 
@@ -97,21 +97,16 @@ module led_board_side() {
         translate([bottom_left_x+5,-.001,bottom_left_z+10])
             led_holes();
         translate([5+wall_width,2+wall_width,10])
-        translate([mic_diameter,mic_diameter,0])
+        translate([mic_diameter,mic_diameter+2,1])
             cylinder(500,mic_diameter,mic_diameter);
-        translate([5,3,65])
+        translate([5,1,65])
             writer("WORLD");    
-        translate([5,3,47.5])
+        translate([5,1,47.5])
             writer("DOMINATION");    
-        translate([5,3,30])
+        translate([5,1,30])
             writer("INDUSTRIES");    
     }
-    translate([0,1,70])
-    cube([width,1,1]);
-    translate([0,1,52.5])
-    cube([width,1,1]);
-    translate([0,1,35])
-    cube([width,1,1]);
+
     translate([bottom_left_x,0,bottom_left_z])
     led_posts();
 }
