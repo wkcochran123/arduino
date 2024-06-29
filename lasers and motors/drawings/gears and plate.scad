@@ -1,5 +1,6 @@
 
-bearing_outer_bore = 8.5;
+bearing_outer_bore = 19/2;
+buffer = 1/2;
 
 module tooth(degree,radius) {
     points = [ [0,-2] , [0,2] , [3.8,0.1], [3.8,-0.1] ];
@@ -23,12 +24,12 @@ module gear_with_bearing(teeth, thickness, inner_bore, outer_bore) {
     
         }
         translate([0,0,1]) {
-            cylinder(thickness,bearing_outer_bore,bearing_outer_bore, $fn = 40);
+            cylinder(thickness,bearing_outer_bore,bearing_outer_bore, $fn = 70);
         }
     }
     deg = 360/teeth;
     for (i = [deg:deg:360]) {
-        tooth(i,outer_bore-1);
+        tooth(i,outer_bore-.5);
     }
 }
 
@@ -66,20 +67,23 @@ module base(width, length) {
     }
     translate([axel_x,axel_y,0]) {
         difference() {
-            cylinder(h=13.5,r=9.5, $fn=100);
+            cylinder(h=13.5,r=bearing_outer_bore + buffer, $fn=100);
             translate([0,0,12.5]) {
                 cylinder(h=2, r=bearing_outer_bore);
+            }
+            translate([0,0,-1]) {
+                cylinder(20,1,$fn=20);
             }
         }
     }
 }
 
-base(33,43);
+//base(33,43);
 
 translate([-50,0,0]) {
-    gear_with_bearing(20,2,1.6,9.5);
+    gear_with_bearing(20,4,1.0,bearing_outer_bore + buffer);
 }
 
-translate ([0,-50,0]) {
-    drive_gear(30,2,2,10);
-}
+//translate ([0,-50,0]) {
+//    drive_gear(30,2,1.0,bearing_outer_bore + (2*buffer));
+//}
