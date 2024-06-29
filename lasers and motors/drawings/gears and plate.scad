@@ -1,5 +1,5 @@
 
-bearing_outer_bore = 17;
+bearing_outer_bore = 8.5;
 
 module tooth(degree,radius) {
     points = [ [0,-2] , [0,2] , [3.8,0.1], [3.8,-0.1] ];
@@ -51,6 +51,8 @@ module base(width, length) {
     base_points = [ [0,0],[length,0],[length,width],[0,width] ];
     cutout_width = 22.6;
     cutout_len = 12.3;
+    axel_x = 5 + 12.3/2 + 20.2;
+    axel_y = 21;
     cutout_points = [ [0,0],[cutout_len,0],[cutout_len,cutout_width],[0,cutout_width]];
     difference() {
         linear_extrude(height=2) {
@@ -61,19 +63,23 @@ module base(width, length) {
                 polygon(cutout_points);
             }
         }
-        translate( [40,20,1] ) {
-            cylinder(h=2,r=bearing_outer_bore);
+    }
+    translate([axel_x,axel_y,0]) {
+        difference() {
+            cylinder(h=13.5,r=9.5, $fn=100);
+            translate([0,0,12.5]) {
+                cylinder(h=2, r=bearing_outer_bore);
+            }
         }
     }
-
 }
 
-base(50,60);
+base(33,43);
 
 translate([-50,0,0]) {
-    gear_with_bearing(35,2,1.6,20);
+    gear_with_bearing(20,2,1.6,9.5);
 }
 
 translate ([0,-50,0]) {
-    drive_gear(50,2,2,25);
+    drive_gear(30,2,2,10);
 }
