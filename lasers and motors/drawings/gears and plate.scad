@@ -52,7 +52,7 @@ module base(width, length) {
     base_points = [ [0,0],[length,0],[length,width],[0,width] ];
     cutout_width = 22.6;
     cutout_len = 12.3;
-    axel_x = 5 + 12.3/2 + 20.2;
+    axel_x = 5 + cutout_len/2 + 21.8;
     axel_y = 21;
     cutout_points = [ [0,0],[cutout_len,0],[cutout_len,cutout_width],[0,cutout_width]];
     difference() {
@@ -67,23 +67,23 @@ module base(width, length) {
     }
     translate([axel_x,axel_y,0]) {
         difference() {
-            cylinder(h=13.5,r=bearing_outer_bore + buffer, $fn=100);
-            translate([0,0,12.5]) {
-                cylinder(h=2, r=bearing_outer_bore);
+            cylinder(h=11.3,r=bearing_outer_bore + buffer, $fn=100);
+            translate([0,0,10.3]) {
+                cylinder(h=2, r=bearing_outer_bore + 0.1);
             }
             translate([0,0,-1]) {
-                cylinder(20,1,$fn=20);
+                cylinder(20,1.4,$fn=20);
             }
         }
     }
 }
 
-//base(33,43);
+base(33,43);
 
-translate([-50,0,0]) {
-    gear_with_bearing(20,4,1.0,bearing_outer_bore + buffer);
-}
+//translate([-50,0,0]) {
+//    gear_with_bearing(20,3.6,1.4,bearing_outer_bore + buffer);
+//}
 
 //translate ([0,-50,0]) {
-//    drive_gear(30,2,1.0,bearing_outer_bore + (2*buffer));
+//    drive_gear(24,2,1.4,bearing_outer_bore + (8*buffer));
 //}
