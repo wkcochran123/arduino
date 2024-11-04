@@ -44,7 +44,7 @@ module drive_gear(teeth, thickness, inner_bore, outer_bore) {
     }
     deg = 360/teeth;
     for (i = [deg:deg:360]) {
-        tooth(i,outer_bore-1);
+        tooth(i,outer_bore-1,2);
     }
 }
 
@@ -65,17 +65,23 @@ module base(width, length) {
             }
         }
         translate([axel_x,axel_y,-5]) {
-            cylinder(20,1.5,$fn=20);
+            cylinder(20,1.7,$fn=20);
+        }
+        translate([5+cutout_len/2,2.5,-1]) {
+            cylinder(5,1,1,$fn=20);
+        }
+        translate([5+cutout_len/2,width-2.5,-1]) {
+            cylinder(5,1,1,$fn=20);
         }
     }
     translate([axel_x,axel_y,0]) {
         difference() {
-            cylinder(h=15,r=bearing_outer_bore + buffer+.2, $fn=100);
-            translate([0,0,14]) {
-                cylinder(h=2, r=bearing_outer_bore + 0.2);
+            cylinder(h=15,r=bearing_outer_bore + buffer+.2, $fn=1000);
+            translate([0,0,13.7]) {
+                cylinder(h=2, r=bearing_outer_bore + 0.2,$fn=200);
             }
             translate([0,0,-5]) {
-                cylinder(20,1.5,$fn=20);
+                cylinder(20,1.7,$fn=200);
             }
         }
     }
@@ -85,29 +91,46 @@ translate([50,0,-6]) {
     base(33,64);
 }
 
-//translate([-50,0,0]) {
-//    gear_with_bearing(20,3.6,1.4,bearing_outer_bore + buffer);
-//}
 
 module gear_platform(length,width) {
     base_points = [ [0,0],[length,0],[length,width],[0,width] ];
+    hole_width=2;
+    base_hole = [ [-1,width-8],[length/2,width-8],[length/2,width-(8+hole_width)], [-1,width-(8+hole_width)]];
+    base_support = [ [0,width-8],[length/2,width-8],[length/2,width-(8+hole_width)], [0,width-(8+hole_width)],[0,width-(10+hole_width)],[length/2 + 2,width-(10+hole_width)],[length/2+2,width-6],[0,width-6]];
 
-    translate([-length/2,-15,0]) {
+    difference() {
+        union() {
             linear_extrude(height=2) {
                 polygon(base_points);
             }
+            linear_extrude(height=6) {
+                polygon(base_support);
+            }
+        }
+        translate([0,0,-1]) {
+            linear_extrude(height=4) {
+                polygon(base_hole);
+            }
+        }
+        translate([10,45,4]) {
+            rotate([90,0,0]) {
+                cylinder(10,1,1);
+            }
+        }
     }
-    translate([0,0,2]) {
+    
+    
+    translate([length/2,15,2]) {
       gear_with_bearing(20,7,1.4,bearing_outer_bore + buffer);
     }
 }
+translate([0,50,-5]) {
+    gear_platform (25,50);
+}
 
-gear_platform (25,50);
-
-
-//translate ([0,0,-6]) {
-//    drive_gear(50,2,1.4,bearing_outer_bore + (27*buffer));
-//}
+translate ([0,0,-6]) {
+    drive_gear(50,2,1.4,bearing_outer_bore + (27*buffer));
+}
 
 /**
  *  Parametric servo arm generator for OpenScad
@@ -327,5 +350,4 @@ module demo() {
     rotate([0, 180, 0])
         servo_standard(20, 4);
 }
-
-// demo();
+ demo();
