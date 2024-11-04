@@ -29,7 +29,7 @@ module gear_with_bearing(teeth, thickness, inner_bore, outer_bore) {
     }
     deg = 360/teeth;
     for (i = [deg:deg:360]) {
-        tooth(i,outer_bore-.5,thickness - 2);
+        tooth(i,9.5,thickness - 2);
     }
 }
 
@@ -42,9 +42,9 @@ module drive_gear(teeth, thickness, inner_bore, outer_bore) {
             
         }
     }
-    deg = 360/teeth;
+    deg = 360/(teeth*.8);
     for (i = [deg:deg:360]) {
-        tooth(i,outer_bore-1,2);
+        tooth(i,outer_bore+.1,2);
     }
 }
 
@@ -129,7 +129,7 @@ translate([0,50,-5]) {
 }
 
 translate ([0,0,-6]) {
-    drive_gear(50,2,1.4,bearing_outer_bore + (27*buffer));
+    drive_gear(50,2,1.4,bearing_outer_bore + (23*buffer));
 }
 
 /**
